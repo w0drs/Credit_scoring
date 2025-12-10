@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 
+BACKEND_URL = "http://host.docker.internal:8000"
 
 
 st.set_page_config(page_title="Кредитный скоринг", layout="centered")
@@ -34,7 +35,7 @@ if submitted:
                     "full_name": full_name,
                     "id": client_id
                 }
-                response = requests.post("http://127.0.0.1:8000/predict", json=features)
+                response = requests.post(f"{BACKEND_URL}/predict", json=features)
                 print(response.json())
                 if response.json().get("error", None) is not None:
                     st.error(f"Клиент с ID {client_id} не найден")

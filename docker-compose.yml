@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+    working_dir: /app/src/backend
+    environment:
+      - PYTHONPATH=/app/src:/app
+
+  frontend:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./src:/app/src
+    command: streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    working_dir: /app/src/frontend
+    depends_on:
+      - backend

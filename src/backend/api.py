@@ -1,3 +1,10 @@
+from src.ml.data_transformers.transformers import TimeTransformer, OutlierTransformer
+import sys
+sys.modules['__main__'].OutlierTransformer = OutlierTransformer
+sys.modules['__main__'].TimeTransformer = TimeTransformer
+from lightgbm import LGBMClassifier
+from src.tools.time import datetime_to_bank_format
+from src.tools.yaml_loader import load_yaml_safe
 import joblib
 from fastapi import FastAPI
 import uvicorn
@@ -5,11 +12,6 @@ from database import Database
 from schema import ClientData
 import pandas as pd
 import timeit
-from src.tools.time import datetime_to_bank_format
-from src.tools.yaml_loader import load_yaml_safe
-# from src.tools.yaml_getter import get_yaml_files
-from lightgbm import LGBMClassifier
-from src.ml.data_transformers.transformers import TimeTransformer, OutlierTransformer
 
 
 app = FastAPI()
