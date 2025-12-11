@@ -19,7 +19,7 @@ information:
 model:
   file_path: ../../model/pipline_model_2.pkl
   name: pipline LightGBM
-  threshold: 0.25
+  threshold: 0.75
   params:
     colsample_bytree: 0.6525305504945635
     learning_rate: 0.047127077338180494
