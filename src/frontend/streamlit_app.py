@@ -36,7 +36,6 @@ if submitted:
                     "id": client_id
                 }
                 response = requests.post(f"{BACKEND_URL}/predict", json=features)
-                print(response.json())
                 if response.json().get("error", None) is not None:
                     st.error(f"Клиент с ID {client_id} не найден")
                 else:
