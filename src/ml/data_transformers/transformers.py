@@ -17,7 +17,7 @@ class TimeTransformer(BaseEstimator, TransformerMixin):
             month = dates.dt.month
 
             # ОСТАВЛЯЕМ ТОЛЬКО ВАЖНЫЕ:
-            # 2. Сезон
+            # 1. Сезон
             df_temp['season'] = month.apply(self._get_season)
 
             # 2. Квартал года
