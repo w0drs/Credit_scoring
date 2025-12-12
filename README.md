@@ -67,8 +67,8 @@ docker-compose up --build
 
 ## 📸 Демонстрация работы
 
-### Веб интерфейс
 <div>
+### Веб интерфейс
 <div align="center" style="display: flex; justify-content: center; gap: 20px; margin: 20px 0;">
   <div style="text-align: center;">
     <p><strong>Streamlit интерфейс</strong></p>
@@ -176,6 +176,7 @@ Recall (дефолт): 0.40 ⬇️
 - Реализовать мониторинг prometheus + graphana
 - Добавить SHAP explanations в интерфейс
 - Перейти на PostgreSQL
+
 
 
 
