@@ -43,4 +43,27 @@
   </div>
 </div>
 
+## Преобразование данных
+- Пропусков в education_cd было немного, поэтому заполнил их модой
+- Колонку appl_rej_cnt заменил на маску "appl_rej_cnt > 5"
+- Колонку out_request_cnt заменил на маску "out_request_cnt > 10"
+- К колонкам "education_cd", "gender_cd", "car_own_flg", "car_type_flg", "Air_flg" применил one-hot encoding
+- Колонки 'age', 'income', 'region_rating' нормализовал (StandardScaler)
+
+### Преобразование колонки с временем подачи заявки  
+Из даты выделил следующие признаки:  
+- Сезоны (Лето/Зима/Весна/Осень)  
+- Кварталы года (1-4)
+
+## Важность признаков после обучения
+Важность измерял с помощью SHAP:
+<div>
+  <div style="text-align: center;">
+    <img src="../images/shap.JPG" width="50%" alt="corr_matrix">
+  </div>
+</div>
+
+
+
+
 
