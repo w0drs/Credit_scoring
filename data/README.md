@@ -29,3 +29,17 @@
 - first_time_cd - Давность наличия информации о заявителе
 - air_flg - Наличие загран паспорта
 - default_flg - Флаг дефолта по кредиту
+
+## EDA
+После проведения первичного анализа данных было выявлено:
+- Пропуски в education_cd
+- Сильный дисбаланс классов (класса "1" в 8 раз меньше)
+- Выбросы в appl_rej_cnt и out_request_cnt
+
+Матрица корреляции:
+<div>
+  <div style="text-align: center;">
+    <img src="images/corr.JPG" width="50%" alt="corr_matrix">
+  </div>
+</div>
+
