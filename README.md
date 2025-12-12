@@ -150,7 +150,7 @@ CreditScoringSystem/
 Pipline модели:
 <div>
   <div align="center" style="text-align: center;">
-    <img src="images/pipline.JPG" width="50%" alt="details">
+    <img src="images/pipline.JPG" width="50%" alt="pipline">
   </div>
 </div>
 
@@ -192,6 +192,7 @@ Recall (дефолт): 0.40 ⬇️
 - Реализовать мониторинг prometheus + graphana
 - Добавить SHAP explanations в интерфейс
 - Перейти на PostgreSQL
+
 
 
 
