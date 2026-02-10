@@ -3,7 +3,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28-red)](https://streamlit.io)
 [![Docker](https://img.shields.io/badge/Docker-✓-blue)](https://docker.com)
 
-# 🏦 Кредитный скоринг - ML проект
+# 🏦 Кредитный скоринг
 
 **Проект по предсказанию дефолта по кредитным заявкам**
 
@@ -190,5 +190,6 @@ Recall (дефолт): 0.40
 | Precision (класс 1) |	0.35 | 
 | Recall (класс 1) | 0.40 | 
 | Inference time | 40-50ms | 
+
 
 
