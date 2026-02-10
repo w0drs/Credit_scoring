@@ -11,10 +11,10 @@
 
 ## 📖 История проекта
 
-### 🎯 Проблема
+### Проблема
 Банк теряет деньги из-за дефолтов по кредитам. Традиционные методы оценки неэффективны на больших объемах данных.
 
-### 💡 Идея
+### Идея
 Создать ML-модель, которая:
 - Автоматически оценивает риск дефолта
 - Работает в реальном времени через API
@@ -45,48 +45,6 @@
 - **ROC-AUC:** 0.728
 - **Время предсказания:** 40-50ms
 - **Дисбаланс классов:** 80/20 успешно обработан
-
----
-
-## 🚀 Быстрый старт
-
-```bash
-# Клонирование
-git clone https://github.com/ваш-логин/credit-scoring.git
-cd credit-scoring
-
-# Установка зависимостей
-pip install -r requirements.txt
-
-# Запуск
-docker-compose up --build
-```
-Доступно по адресам:  
-- Streamlit интерфейс: http://localhost:8501  
-- FastAPI API: http://localhost:8000/docs
-
----
-
-## 📸 Демонстрация работы
-
-<div>
-<div align="center" style="display: flex; justify-content: center; gap: 20px; margin: 20px 0;">
-  <div style="text-align: center;">
-    <p><strong>Streamlit интерфейс</strong></p>
-  </div>
-  <div style="text-align: center;">
-    <img src="images/main.JPG" width="75%" alt="main_page UI">
-    <p>Главная страница</p>
-  </div>
-  <div align="center" style="text-align: center;">
-    <img src="images/predict.JPG" width="75%" alt="predict">
-    <p>Прогноз модели</p>
-  </div>
-  <div align="center" style="text-align: center;">
-    <img src="images/details.JPG" width="75%" alt="details">
-    <p>Информация о клиенте</p>
-  </div>
-</div>
 
 ---
 
@@ -190,6 +148,48 @@ Recall (дефолт): 0.40
 | Precision (класс 1) |	0.35 | 
 | Recall (класс 1) | 0.40 | 
 | Inference time | 40-50ms | 
+
+---
+
+## 📸 Демонстрация работы
+
+<div>
+<div align="center" style="display: flex; justify-content: center; gap: 20px; margin: 20px 0;">
+  <div style="text-align: center;">
+    <p><strong>Streamlit интерфейс</strong></p>
+  </div>
+  <div style="text-align: center;">
+    <img src="images/main.JPG" width="75%" alt="main_page UI">
+    <p>Главная страница</p>
+  </div>
+  <div align="center" style="text-align: center;">
+    <img src="images/predict.JPG" width="75%" alt="predict">
+    <p>Прогноз модели</p>
+  </div>
+  <div align="center" style="text-align: center;">
+    <img src="images/details.JPG" width="75%" alt="details">
+    <p>Информация о клиенте</p>
+  </div>
+</div>
+
+---
+
+## 🚀 Быстрый старт
+
+```bash
+# Клонирование
+git clone https://github.com/ваш-логин/credit-scoring.git
+cd credit-scoring
+
+# Установка зависимостей
+pip install -r requirements.txt
+
+# Запуск
+docker-compose up --build
+```
+Доступно по адресам:  
+- Streamlit интерфейс: http://localhost:8501  
+- FastAPI API: http://localhost:8000/docs
 
 
 
