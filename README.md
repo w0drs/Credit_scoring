@@ -1,9 +1,4 @@
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)](https://fastapi.tiangolo.com)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28-red)](https://streamlit.io)
-[![Docker](https://img.shields.io/badge/Docker-✓-blue)](https://docker.com)
-
-🏦 Кредитный скоринг
+Кредитный скоринг
 ==============================
 
 **Проект по предсказанию дефолта по кредитным заявкам**
@@ -207,6 +202,7 @@ docker-compose up --build
 Доступно по адресам:  
 - Streamlit интерфейс: http://localhost:8501  
 - FastAPI API: http://localhost:8000/docs
+
 
 
 
