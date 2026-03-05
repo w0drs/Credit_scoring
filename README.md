@@ -180,7 +180,7 @@ Recall (дефолт): 0.40
 
 ```bash
 # Клонирование
-git clone https://github.com/ваш-логин/credit-scoring.git
+git clone https://github.com/w0drs/credit-scoring.git
 cd credit-scoring
 
 # Установка зависимостей
@@ -192,6 +192,7 @@ docker-compose up --build
 Доступно по адресам:  
 - Streamlit интерфейс: http://localhost:8501  
 - FastAPI API: http://localhost:8000/docs
+
 
 
 
