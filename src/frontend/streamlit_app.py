@@ -7,7 +7,8 @@ BACKEND_URL = "http://host.docker.internal:8000"
 st.set_page_config(page_title="Кредитный скоринг", layout="centered")
 
 # Заголовок
-st.title("🏦 Проверка кредитного скоринга")
+# st.title("🏦 Проверка кредитного скоринга")
+st.title("🐋 Проверка на deepseek")
 
 # Форма ввода
 with st.form("scoring_form"):
