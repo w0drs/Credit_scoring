@@ -11,7 +11,9 @@ cleanup() {
 }
 trap cleanup EXIT
 docker run --rm --workdir /app/tests/unit_tests "$image" python -m pytest -q
-docker run --rm --user "$(id -u):$(id -g)" -v "$state:/state" "$image" python ci/verify-database.py /state
+# Give yoyo's audit log a name even when the runner UID is absent from /etc/passwd.
+docker run --rm --user "$(id -u):$(id -g)" -e LOGNAME=scoring-ci \
+    -v "$state:/state" "$image" python ci/verify-database.py /state
 container=$(docker run -d --user "$(id -u):$(id -g)" --workdir /app/src/backend \
     -v "$state:/state:ro" -e SCORING_DB=/state/prod.db -p 127.0.0.1::8000 \
     "$image" uvicorn api:app --host 0.0.0.0 --port 8000)
