@@ -1,0 +1,53 @@
+name: Lab 8 — Manual STAGE schema
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration:
+        description: Explicitly choose the SQL migration to apply before deploying STAGE
+        required: true
+        type: choice
+        options:
+          - 001_review
+
+permissions:
+  contents: read
+
+env:
+  LAB8_IMAGE: scoring-lab8:${{ github.sha }}
+
+jobs:
+  manual-stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Check SQL and build the scoring image
+        run: |
+          uv run --no-project --python 3.12 --with sqlglot==28.5.0 python ci/sql_policy.py
+          docker build -f ci/Dockerfile -t "$LAB8_IMAGE" .
+          echo "LAB8_STATE=$RUNNER_TEMP/lab8" >> "$GITHUB_ENV"
+      - name: Apply the first migration to TEST and test the application
+        run: |
+          bash ci/lab8-db.sh seed test
+          bash ci/lab8-db.sh seed stage
+          bash ci/lab8-db.sh first-test
+          bash ci/smoke-image.sh "$LAB8_IMAGE" "$LAB8_STATE/test.db" TEST
+      - name: Apply the manually selected SQL on STAGE before deploying the application
+        env:
+          MIGRATION: ${{ inputs.migration }}
+        run: |
+          test "$MIGRATION" = 001_review
+          bash ci/lab8-db.sh manual-stage
+          bash ci/lab8-db.sh verify stage db/schema/review.sql
+          echo 'STAGE application deployment has not started'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lab8-manual-db
+          path: |
+            ${{ env.LAB8_STATE }}/test.db
+            ${{ env.LAB8_STATE }}/stage.db
+          retention-days: 2
+          if-no-files-found: error
