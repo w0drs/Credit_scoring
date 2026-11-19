@@ -1,0 +1,43 @@
+name: Lab 8 — DEV to STAGE
+
+on:
+  push:
+    branches: [devops/lab8-github]
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  LAB8_IMAGE: scoring-lab8:${{ github.sha }}
+
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Load the explicitly migrated TEST and STAGE databases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          state="$RUNNER_TEMP/lab8"
+          echo "LAB8_STATE=$state" >> "$GITHUB_ENV"
+          run=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow lab8-manual.yml \
+            --branch "$GITHUB_REF_NAME" --event workflow_dispatch --status success \
+            --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          test -n "$run"
+          echo "Database checkpoint from manual run $run"
+          gh run download "$run" --repo "$GITHUB_REPOSITORY" --name lab8-manual-db --dir "$state"
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Check SQL and build the pushed DEV revision
+        run: |
+          uv run --no-project --python 3.12 --with sqlglot==28.5.0 python ci/sql_policy.py
+          docker build -f ci/Dockerfile -t "$LAB8_IMAGE" .
+      - name: Verify the manual schema and deploy STAGE from DEV
+        run: |
+          bash ci/lab8-db.sh verify test db/schema/review.sql
+          bash ci/lab8-db.sh verify stage db/schema/review.sql
+          echo 'TEST == STAGE before deploying the first application update'
+          bash ci/smoke-image.sh "$LAB8_IMAGE" "$LAB8_STATE/stage.db" STAGE
