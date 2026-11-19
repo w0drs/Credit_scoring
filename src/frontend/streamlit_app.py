@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
+from os import environ
 
-BACKEND_URL = "http://host.docker.internal:8000"
+BACKEND_URL = environ.get("BACKEND_URL", "http://host.docker.internal:8000")
 
 
 st.set_page_config(page_title="Кредитный скоринг", layout="centered")
