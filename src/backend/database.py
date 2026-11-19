@@ -28,6 +28,12 @@ class Database:
                 return dict(row._mapping)
             return None
 
+    def get_review_status(self, application_id: int) -> Optional[Dict[str, Any]]:
+        query = text("SELECT id, review_status FROM applications_database WHERE id = :id")
+        with self.engine.connect() as connection:
+            row = connection.execute(query, {"id": application_id}).mappings().first()
+            return dict(row) if row is not None else None
+
     def get_all_clients(self, limit: int = 100) -> pd.DataFrame:
         """Получить всех клиентов (для анализа)"""
         query = "SELECT * FROM applications_database LIMIT :limit"

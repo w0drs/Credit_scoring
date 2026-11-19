@@ -6,7 +6,8 @@ from lightgbm import LGBMClassifier
 from src.tools.time import datetime_to_bank_format
 from src.tools.yaml_loader import load_yaml_safe
 import joblib
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from os import environ
 import uvicorn
 from database import Database
 from schema import ClientData
@@ -21,15 +22,26 @@ threshold = model_config["model"]["threshold"]
 # ML модель
 model = joblib.load(model_config["model"]["file_path"])
 # загрузка данных
-db = Database(model_config["data"]["database"])
+db = Database(environ.get("SCORING_DB", model_config["data"]["database"]))
 #list_of_models = get_yaml_files("../../config/")
 print("✅ Импорт успешен!")
+
+@app.get("/applications/{application_id}/review")
+def get_review(application_id: int):
+    review = db.get_review_status(application_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return review
+
 
 @app.post("/predict")
 def predict(client: ClientData):
     start = timeit.default_timer()
     client_name, client_id = client.full_name, client.id
     client_data = db.get_client_by_id(client_id)
+    if client_data is None:
+        raise HTTPException(status_code=404, detail="Application not found")
+    client_data.pop("review_status", None)
     client_data["application_dt"] = datetime_to_bank_format()
     client_dataframe = pd.DataFrame([client_data])
     try:
