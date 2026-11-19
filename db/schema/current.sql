@@ -20,3 +20,5 @@ CREATE TABLE applications_database (
 , review_status TEXT NOT NULL DEFAULT 'pending');
 CREATE INDEX idx_applications_review
     ON applications_database (id, review_status);
+CREATE INDEX idx_applications_review_status
+    ON applications_database (review_status);

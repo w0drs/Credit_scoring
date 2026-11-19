@@ -35,9 +35,29 @@ jobs:
         run: |
           uv run --no-project --python 3.12 --with sqlglot==28.5.0 python ci/sql_policy.py
           docker build -f ci/Dockerfile -t "$LAB8_IMAGE" .
-      - name: Verify the manual schema and deploy STAGE from DEV
+      - name: Update TEST and verify the candidate application
         run: |
-          bash ci/lab8-db.sh verify test db/schema/review.sql
-          bash ci/lab8-db.sh verify stage db/schema/review.sql
-          echo 'TEST == STAGE before deploying the first application update'
+          bash ci/lab8-db.sh test-latest
+          bash ci/smoke-image.sh "$LAB8_IMAGE" "$LAB8_STATE/test.db" TEST
+      - name: Compare TEST and STAGE, migrate and deploy
+        run: |
+          bash ci/lab8-db.sh promote stage test
+          bash ci/lab8-db.sh verify stage db/schema/current.sql
           bash ci/smoke-image.sh "$LAB8_IMAGE" "$LAB8_STATE/stage.db" STAGE
+      - name: Export the image that passed STAGE verification
+        run: docker save "$LAB8_IMAGE" | gzip > "$RUNNER_TEMP/lab8-stage-image.tar.gz"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lab8-stage-db
+          path: |
+            ${{ env.LAB8_STATE }}/test.db
+            ${{ env.LAB8_STATE }}/stage.db
+          retention-days: 2
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lab8-stage-image
+          path: ${{ runner.temp }}/lab8-stage-image.tar.gz
+          compression-level: 0
+          retention-days: 2
+          if-no-files-found: error

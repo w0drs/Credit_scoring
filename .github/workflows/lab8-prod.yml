@@ -1,0 +1,67 @@
+name: Lab 8 — STAGE to PROD
+
+on:
+  push:
+    tags: ['scoring-lab8-prod-v*']
+
+permissions:
+  contents: read
+  actions: read
+  packages: write
+
+env:
+  LAB8_IMAGE: scoring-lab8:${{ github.sha }}
+
+jobs:
+  prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Check SQL and load the exact STAGE release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          uv run --no-project --python 3.12 --with sqlglot==28.5.0 python ci/sql_policy.py
+          state="$RUNNER_TEMP/lab8"
+          echo "LAB8_STATE=$state" >> "$GITHUB_ENV"
+          run=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow lab8-stage.yml \
+            --branch devops/lab8-github --commit "$GITHUB_SHA" --event push --status success \
+            --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          test -n "$run"
+          echo "Loading STAGE checkpoint from successful run $run at $GITHUB_SHA"
+          gh run download "$run" --repo "$GITHUB_REPOSITORY" --name lab8-stage-db --dir "$state"
+          gh run download "$run" --repo "$GITHUB_REPOSITORY" --name lab8-stage-image --dir "$RUNNER_TEMP"
+          docker load -i "$RUNNER_TEMP/lab8-stage-image.tar.gz"
+      - name: Back up PROD before changing its schema
+        run: |
+          bash ci/lab8-db.sh seed prod
+          bash ci/lab8-db.sh backup-prod
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lab8-prod-backup
+          path: ${{ env.LAB8_STATE }}/prod-before.db
+          retention-days: 3
+          if-no-files-found: error
+      - name: Compare STAGE and PROD, migrate and deploy
+        run: |
+          bash ci/lab8-db.sh promote prod stage
+          bash ci/lab8-db.sh verify test db/schema/current.sql
+          bash ci/lab8-db.sh verify stage db/schema/current.sql
+          bash ci/lab8-db.sh verify prod db/schema/current.sql
+          echo 'TEST == STAGE == PROD'
+          bash ci/smoke-image.sh "$LAB8_IMAGE" "$LAB8_STATE/prod.db" PROD
+      - name: Restore and verify the pre-migration backup
+        run: bash ci/lab8-db.sh restore-prod
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish the exact deployed image
+        run: |
+          target="ghcr.io/${GITHUB_REPOSITORY,,}:$GITHUB_SHA"
+          docker tag "$LAB8_IMAGE" "$target"
+          docker push "$target"
